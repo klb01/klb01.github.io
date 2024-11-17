@@ -34,7 +34,7 @@ html {
 
 #h1_mc {
     margin-bottom: 2em;
-    margin-top: -1em;
+    margin-top: -2em;
 }
 
 #div_main {
@@ -50,13 +50,8 @@ html {
 }
 
 .div_input {
-    margin-bottom: 0.5em;
-    margin-top: 0.5em;
-}
-
-#div_heston_input {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
+    margin-top: 1em;
 }
 
 #divplot {
