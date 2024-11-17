@@ -1,0 +1,107 @@
+:root {
+    --axes-color: #D6D6D6;
+    --axes-font-color: #D6D6D6;
+    --axes-font-size: 0.04;
+}
+
+html {
+    align-items: center;
+    background-image: linear-gradient(to bottom right, #4F4F51, #2C2B30);
+    background-size: 100% 150%;
+    color: #D6D6D6;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#div_page {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#div_top {
+    display: flex;
+    flex-direction: row;
+}
+
+#div_left {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#h1_mc {
+    margin-bottom: 2em;
+    margin-top: -1em;
+}
+
+#div_main {
+    align-items: left;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2em;
+    justify-content: center;
+}
+
+#div_input_radio {
+    float: right;
+}
+
+.div_input {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+}
+
+#div_heston_input {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#divplot {
+    margin-left: 4em;
+}
+
+#svgplot {
+    height: 40em;
+    transform-box: fill-box;
+    width: 40em;
+}
+
+input[type=radio] {
+    cursor: pointer;
+    margin-top: -0.0625em;
+    vertical-align: middle;
+}
+
+input[type=range] {
+    cursor: pointer;
+    float: right;
+    margin-left: 3em;
+    width: 21em;
+}
+
+#div_bottom {
+    margin-left: 4.5em;
+    margin-right: 4.5em;
+}
+
+a {
+    color: #F08BA1;
+}
+
+ol {
+    counter-reset: item;
+    list-style: none;
+}
+
+li {
+    counter-increment: item;
+}
+
+li::before {
+    content: "[" counter(item) "]";
+    margin-left: -1.9em;
+    margin-right: 0.8em;
+}

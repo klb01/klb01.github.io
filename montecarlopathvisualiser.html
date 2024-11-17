@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Monte Carlo Path Visualiser</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="./normalrandomnumbers.js"></script>
+    <script type="text/javascript" src="./eulermaruyama.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <div id="div_page">
+
+        <div id="div_top">
+
+            <div id="div_left">
+
+                <h1 id="h1_mc">Monte Carlo Path Visualiser</h1>
+
+                <div id="div_main">
+
+                    <div class="div_input">
+
+                        <label>Model</label>
+                        <div id="div_input_radio">
+                            <input id="bs" type="radio" name="input_model" checked onclick="handle_model()" />
+                            <label>Black-Scholes</label>
+                            <input id="heston" type="radio" name="input_model" onclick="handle_model()" />
+                            <label>Heston</label>
+
+                        </div>
+
+                        <div class="div_input">
+                            <label>Initial asset price S</label>
+                            <input id="bs_S" type="range" min="0" max="1" value="0.5" step="0.01" />
+                        </div>
+
+                        <div class="div_input">
+                            <label>Expected rate of return &mu;</label>
+                            <input id="bs_mu" type="range" min="0" max="1" value="0.0475" step="0.01" />
+                        </div>
+
+                        <div class="div_input">
+                            <label id="bs_sigma_label">Volatility &sigma;</label>
+                            <input id="bs_sigma" type="range" min="0" max="1" value="0.2" step="0.01" />
+                        </div>
+
+                        <div id="div_heston" class="div_input" style="visibility:hidden;">
+                            <div>
+                                <label>Initial variance &theta;</label>
+                                <input id="h_v0" type="range" min="0" max="1" value="0.05" step="0.01" />
+                            </div>
+
+                            <div id="div_heston_input">
+                                <label>Mean reversion rate &kappa;</label>
+                                <input id="h_kappa" type="range" min="0" max="1" value="0.5" step="0.01" />
+                            </div>
+
+                            <div id="div_heston_input">
+                                <label>Long variance &theta;</label>
+                                <input id="h_theta" type="range" min="0" max="1" value="0.05" step="0.01" />
+                            </div>
+
+                            <div id="div_heston_input">
+                                <label>Correlation &rho;</label>
+                                <input id="h_rho" type="range" min="-1" max="1" value="0" step="0.01" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="divplot">
+                <svg id="svgplot" viewBox="0 -0.15 1 1.4" xmlns="http://www.w3.org/2000/svg">
+                    <g id="data"></g>
+                    <g id="axes"></g>
+                    <g id="hist"></g>
+                    <path d="
+                M 0 0 
+                l 0 1
+                l 1 0" stroke="var(--axes-color)" stroke-width="0.005" fill="none"></path>
+                </svg>
+
+            </div>
+
+        </div>
+
+        <div id="div_bottom">
+            <h3>Description</h3>
+            <p>
+                The Monte Carlo Path Visualiser illustrates sample asset prices generated from Black-Scholes
+                and Heston processes using the Euler-Maruyama numerical method.
+
+                The Black-Scholes model (see [1], [2]) for an asset price \(S_{t}\) is given by the one-factor stochastic process
+                described by
+                \[
+                d S_{t} = \mu \; S_{t} \; dt + \sigma \; S_{t} \; dW_{t}, \label{bs} \tag{1}
+                \]
+                where \(d S_{t}\) is the change in the asset price with respect to time,
+                \(\mu\) is the expected rate of return,
+                \(\sigma\) is the volatility of the asset
+                and \(W_{t}\) is a standard Wiener process.
+
+                Heston&apos;s model [3], on the other hand, is a two-factor model where both the asset&apos;s price
+                and variance are modelled using correlated stochastic processes given by the stochastic differential
+                equations (SDEs),
+                \[
+                \begin{align}
+                d S_{t} &= \mu \; S_{t} \; dt + \sqrt{\nu_{t}} \; S_{t} \; d W_{t}^{1}, \label{hest} \tag{2} \\
+                d \nu_{t} &= \kappa \; (\theta - \nu_{t}) \; dt + \sigma \sqrt{\nu_{t}} \; d W_{t}^{2},
+                \end{align}
+                \]
+                with correlation \( \mathbb{E}[ d W_{t}^{1} d W_{t}^{2} ] = \rho \; dt\). The variance in the underlying asset 
+                is modelled using a
+                Ornstein-Uhlenbeck, or mean-reverting, process. The additional parameter \(\kappa\) is the
+                mean-reversion speed,
+                \(\theta\) is the mean-reversion level, \(\sigma\) is now the volatility of volatility (or vol of
+                vol), and
+                \(\rho\) is the correlation between the asset price and variance processes.
+
+                <br /><br />
+                The Euler-Maruyama method (see [4]) for solving SDE (\(\ref{bs}\)) is given by
+                \[
+                S_{i+1} = S_{i} + \mu S_{i} \Delta t + \sigma S_{i} \sqrt{\Delta t} \; Z_{i}
+                \]
+                for a given initial asset price \(S_{0}\), where \(Z_{i}\) are a series of independent and
+                identically
+                distributed (i.i.d.) random variates
+                taken from the
+                normal distribution \(\mathcal{N}(0,1)\). In the case of Heston&apos;s model (\(\ref{hest}\)),
+                \[
+                \begin{align}
+                S_{i+1} &= S_{i} + \mu S_{i} \Delta t + S_{i} \sqrt{\nu_{i} \Delta t} \; Z_{2i}, \\
+                \nu_{i+1} &= \nu_{i} + \kappa \; (\theta - \nu_{i}) \Delta t + \sigma \sqrt{\nu_{i} \Delta t} \;
+                (\rho Z_{2i} + \sqrt{1-\rho^2} Z_{2i+1}) ,
+                \end{align}
+                \]
+                where the initial variance \(\nu_{0}\) is now also required. Two sets of random variates are
+                needed for
+                the simulation, since there are two stochastic processes; these are denoted using the \(2i\) and
+                \(2i+1\) subscripts.
+
+                <br /><br />
+
+                The simulator above generates 250 paths with 10 time steps.
+                The
+                input parameters for the two models can be varied, and the plot will update accordingly to show the
+                possible resulting asset price paths.
+                Any paths which generate negative variance in Heston&apos;s model are rejected.
+                A histogram is
+                included in the right-hand side of the plot to highlight the distribution of the asset prices at
+                the terminus point \(t=1\).
+            </p>
+
+            <h3>References</h3>
+            <p>
+            <ol>
+                <li>Fischer Black and Myron Scholes. The pricing of options and corporate liabilities. <i>Journal of
+                        Political Economy</i>,
+                    81(3):637-654, 1973.</li>
+                <br>
+                <li>John C. Hull. <i>Options, Futures, and Other Derivatives.</i> Pearson Prentice Hall, Seventh
+                    Edition, 2009.</li>
+                <br>
+                <li>Steven L. Heston. A closed-form solution for options with stochastic volatility with
+                    applications to bond and currency
+                    options. <i>The Review of Financial Studies</i>, 6(2):327-343, 1993.</li>
+                <br>
+                <li>Paul Glasserman. <i>Monte Carlo Methods in Financial Engineering. </i>
+                    Springer, 2004.</li>
+            </ol>
+            </p>
+        </div>
+
+</body>
+
+<script type="text/javascript">
+
+    function setupaxes() {
+        var axes = document.getElementById('axes');
+        x = 0.0;
+        y = 1.0;
+        for (var i = 0; i < 10; ++i) {
+            x += 0.1;
+            axes.innerHTML += `<path stroke-width="0.005" stroke="var(--axes-color)" d="M ${x} 1.0 l 0 -0.02"></path>`;
+            y -= 0.1;
+            axes.innerHTML += `<path stroke-width="0.005" stroke="var(--axes-color)" d="M 0.0 ${y} l 0.02 0"></path>`;
+            axes.innerHTML += `<text x="${i * 0.1 - 0.025}" y="1.05" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">${Number(i * 0.1).toFixed(1)}</text>`;
+        }
+        axes.innerHTML += `<text x="${1 - 0.025}" y="1.05" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">${Number(1).toFixed(1)}</text>`;
+        axes.innerHTML += `<text x="0.42" y="1.14" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">Time step</text>`;
+
+        y = 1.015;
+        x = -0.075;
+        for (var i = 0; i < 10; ++i) {
+            y -= 0.1;
+            axes.innerHTML += `<text x="${x}" y="${y}" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">${Number((1 + i) * 0.1).toFixed(1)}</text>`;
+        }
+        axes.innerHTML += `<text x="-0.2" y="0.5" font-size="var(--axes-font-size)" fill="var(--axes-font-color)"
+        style="transform-origin: center;" transform="translate(-0.2,0.45) rotate(-90) translate(0.2,-0.5)">Asset price</text>`;
+    }
+
+    function singleline(dt, n, s0, X) {
+        var data = document.getElementById('data');
+        let sprev = s0;
+        let scaley = 1.0; 
+
+        var colors = ['#F05B7B', '#F08BA1', '#F2AEBD', '#F2C4CE', '#F2DFE3', '#F2D9D5', '#F2CEC9', '#F2AFA5', '#F58F7F', '#F5705B'];
+
+        let k = 0;
+        color_lt = colors[0];
+        for (rc = 0.1; rc < 1.0 + 1e-10; rc += 0.1) {
+            if (X[n][0] > rc) {
+                color_lt = colors[k];
+            }
+            ++k;
+        }
+
+        for (let j = 0; j <= n; ++j) {
+            scurr = X[j][0];
+
+            if (j > 0)
+                data.innerHTML += `<path d="
+                M ${(j - 1) * dt} ${1.0 - sprev * scaley} 
+                L ${(j - 0) * dt} ${1.0 - scurr * scaley}" stroke="${color_lt}" stroke-width="0.002"></path>`;
+            sprev = scurr;
+        }
+    }
+
+    var hist_data = Array(20).fill(0);
+    function right_hist() {
+        var hist = document.getElementById('hist');
+        hist.innerHTML = '';
+
+        total_population = 0;
+        for (var i = 0; i < hist_data.length; ++i) {
+            total_population += hist_data[i];
+        }
+
+        x = 1.02;
+        y = 0.95;
+        h = 0.02;
+        dy = 1.0 / hist_data.length;
+        for (var i = 0; i < hist_data.length; ++i) {
+            w = hist_data[i] / total_population;
+            hist.innerHTML += `<rect x="${x}" y="${y}" width="${w * 0.5}" height="${h}" fill="#D6D6D6" />`;
+            y -= dy;
+        }
+    }
+
+    function animator() {
+        var bs_mu_new_value = Number(bs_mu.value);
+        var bs_sigma_new_value = Number(bs_sigma.value);
+        var bs_S_new_value = Number(bs_S.value);
+        var h_kappa_new_value = Number(h_kappa.value);
+        var h_theta_new_value = Number(h_theta.value);
+        var h_v0_new_value = Number(h_v0.value);
+        var h_rho_new_value = Number(h_rho.value);
+
+        if (bs_S_new_value != bs_S_old_value
+            || bs_sigma_new_value != bs_sigma_old_value
+            || bs_mu_new_value != bs_mu_old_value
+            || h_kappa_new_value != h_kappa_old_value
+            || h_theta_new_value != h_theta_old_value
+            || h_v0_new_value != h_v0_old_value
+            || h_rho_new_value != h_rho_old_value
+            || paths_rendered == 0
+        ) { // any change... reset plot
+            var data = document.getElementById('data');
+            data.innerHTML = '';
+
+            bs_S_old_value = bs_S_new_value;
+            bs_sigma_old_value = bs_sigma_new_value;
+            bs_mu_old_value = bs_mu_new_value;
+            h_kappa_old_value = h_kappa_new_value;
+            h_theta_old_value = h_theta_new_value;
+            h_v0_old_value = h_v0_new_value;
+            h_rho_old_value = h_rho_new_value;
+            paths_rendered = 0;
+
+            hist_data = Array(20).fill(0);
+
+            rnd_k = 0;
+        }
+
+        let a, b, X0;
+        const n = 10;
+        const dt = 1.0 / n;
+
+        if (paths_rendered < 250) {
+            let nrnvec = Array(n * 2).fill(0);
+            for (k = 0; k < 5; ++k) {
+                for (let j = 0; j < 2 * n; ++j) {
+                    nrnvec[j] = rngn[rnd_k];
+                    ++rnd_k;
+                    rnd_k = rnd_k % rngn.length;
+                }
+
+                if (model_type == 'heston') {
+                    a = (X) => {
+                        return [bs_mu_new_value * X[0],
+                        h_kappa_new_value * (h_theta_new_value - X[1])];
+                    };
+                    b = (X) => {
+                        if (X[1] < 0.0) {
+                            throw new Error('variance below 0');
+                        }
+
+                        v = Math.max(0, X[1]);
+                        return [Math.sqrt(v) * X[0],
+                        bs_sigma_new_value * Math.sqrt(v)];
+                    };
+                    bprime = (X) => {
+                        v = Math.max(0, X[1]);
+                        if (v == 0) {
+                            v2 = 0;
+                        } else {
+                            v2 = 1 / Math.sqrt(X[1]);
+                        }
+                        return [Math.sqrt(v), 0.5 * bs_sigma_new_value * v2];
+                    };
+                    X0 = [bs_S_new_value, h_v0_new_value];
+                }
+                else if (model_type == 'bs') {
+                    a = (X) => { return [bs_mu_new_value * X[0]]; };
+                    b = (X) => { return [bs_sigma_new_value * X[0]]; };
+                    bprime = (X) => { return [bs_sigma_new_value]; };
+                    X0 = [bs_S_new_value];
+                }
+
+                let tries;
+                for (tries = 0; tries < 100; ++tries) {
+                    try {
+                        xs = eulermaruyama(dt, n, X0, nrnvec, a, b, h_rho_new_value);
+                        break;
+                    } catch (e) {
+                    }
+                }
+                if (tries >= 100) {
+                    continue; // skip bad path
+                }
+
+                singleline(dt, n, X0, xs);
+
+                dhist = 1.0 / hist_data.length;
+                hist_bin = Math.floor(1e-9 + xs[n][0] / dhist);
+                if (hist_bin < 0) { hist_bin = 0; }
+                else if (hist_bin >= hist_data.length) { hist_bin = hist_data.length - 1; }
+                hist_data[hist_bin] += 1;
+
+                ++paths_rendered;
+            }
+        }
+
+        right_hist();
+        requestAnimationFrame(animator);
+    }
+
+    function handle_model() {
+        elms = document.getElementsByName('input_model');
+        for (i = 0; i < elms.length; ++i) {
+            if (elms[i].checked) {
+                model_type = elms[i].id;
+            }
+        }
+
+        if (model_type == 'heston') {
+            document.getElementById('bs_sigma_label').innerHTML = 'Vol of vol &sigma;';
+            document.getElementById('div_heston').style.visibility = 'visible';
+        } else {
+            document.getElementById('bs_sigma_label').innerHTML = 'Volatility &sigma;';
+            document.getElementById('div_heston').style.visibility = 'hidden';
+        }
+        paths_rendered = 0;
+
+    }
+
+    var model_type = 'bs';
+
+    var bs_mu = document.getElementById('bs_mu');
+    var bs_sigma = document.getElementById('bs_sigma');
+    var bs_S = document.getElementById('bs_S');
+    var h_kappa = document.getElementById('h_kappa');
+    var h_theta = document.getElementById('h_theta');
+    var h_v0 = document.getElementById('h_v0');
+    var h_rho = document.getElementById('h_rho');
+
+    var bs_mu_old_value = Number(bs_mu.value);
+    var bs_sigma_old_value = Number(bs_sigma.value);
+    var bs_S_old_value = Number(bs_S.value);
+    var h_kappa_old_value = Number(h_kappa.value);
+    var h_theta_old_value = Number(h_theta.value);
+    var h_v0_old_value = Number(h_v0.value);
+    var h_rho_old_value = Number(h_rho.value);
+
+    var rnd_k = 0;
+    var paths_rendered = 0;
+
+    setupaxes();
+    animator();
+
+
+</script>
+
+</html>
