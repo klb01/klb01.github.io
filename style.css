@@ -1,0 +1,123 @@
+:root {
+    --axes-color: #D6D6D6;
+    --axes-font-color: #D6D6D6;
+    --axes-font-size: 0.04;
+}
+
+html {
+    align-items: center;
+    background-image: linear-gradient(to bottom right, #4F4F51, #2C2B30);
+    background-size: 100% 150%;
+    color: #D6D6D6;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#div_page {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#div_top {
+    display: flex;
+    flex-direction: row;
+}
+
+#div_left {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#h1_mc {
+    margin-bottom: 2em;
+    margin-top: -2em;
+}
+
+#div_main {
+    align-items: left;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2em;
+    justify-content: center;
+}
+
+#input_radio {
+    float: right;
+}
+
+.div_input {
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
+#div_heston {
+    display: none;
+}
+
+#div_plot {
+    margin-left: 4em;
+}
+
+#svg_plot {
+    height: 40em;
+    transform-box: fill-box;
+    width: 40em;
+}
+
+input[type=checkbox]:hover {
+    cursor: pointer;
+}
+
+input[type=radio] {
+    margin-top: -0.0625em;
+    vertical-align: middle;
+}
+
+input[type=radio]:hover {
+    cursor: pointer;
+}
+
+input[type=range] {
+    float: right;
+    margin-left: 5em;
+    width: 21em;
+}
+
+input[type=range]:hover {
+    cursor: pointer;
+}
+
+select {
+    cursor: pointer;
+    float: right;
+    font-size: 1em;
+    width: 12em;
+}
+
+#div_bottom {
+    margin-left: 4.5em;
+    margin-right: 4.5em;
+}
+
+a {
+    color: #F08BA1;
+}
+
+ol {
+    counter-reset: item;
+    list-style: none;
+}
+
+li {
+    counter-increment: item;
+}
+
+li::before {
+    content: "[" counter(item) "]";
+    margin-left: -1.9em;
+    margin-right: 0.8em;
+}
