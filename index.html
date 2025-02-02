@@ -55,7 +55,7 @@
                             <output>0</output>
 
                             <label>Variance correction scheme</label>
-                            <select id="select_heston" onchange="changeVCScheme();">
+                            <select id="select_heston" >
                                 <option selected="selected">Accept-Reject</option>
                                 <option>Absorption</option>
                                 <option>Reflection</option>
@@ -66,7 +66,7 @@
                             <output>&nbsp;</output>
                         </div>
                         
-                        <label>Number of time-steps</label>
+                        <label>Number of time steps</label>
                         <input id="in_dt" type="range" min="1" max="30" value="10" step="1" oninput="this.nextElementSibling.value = this.value;" />
                         <output>10</output>
 
@@ -237,9 +237,9 @@
 
                 <br /><br />
 
-                The simulation goes between a minimum of 10 and a maximum of 250 paths depending on how many time-steps
+                The simulation goes between a minimum of 10 and a maximum of 250 paths depending on how many time steps
                 and maximum number of paths are selected.
-                With more time-steps, the simulation inevitably takes longer
+                With more time steps, the simulation inevitably takes longer
                 to render, so reducing the number of paths seems like a reasonable trade-off for visualisation.
                 The input parameters for the two models can be varied, and the plot will update accordingly to show the
                 possible resulting asset price paths. A histogram is
@@ -361,9 +361,8 @@
 
     let f1 = varNone, f2 = varNone, f3 = varNone;
 
-    var vc_scheme = document.getElementById('select_heston').value;
-
     function animator() {
+        var vc_scheme_new = vc_scheme.value;
         var bs_mu_new_value = Number(bs_mu.value);
         var bs_sigma_new_value = Number(bs_sigma.value);
         var bs_S_new_value = Number(bs_S.value);
@@ -372,6 +371,7 @@
         var h_v0_new_value = Number(h_v0.value);
         var h_rho_new_value = Number(h_rho.value);
         var in_dt_new_value = Number(in_dt.value);
+
         var bs_use_log_process_new = bs_use_log_process.checked;
         var path_count_new_value = Number(in_path_count.value);
 
@@ -385,6 +385,7 @@
             || bs_use_log_process_new != bs_use_log_process_old
             || in_dt_new_value != in_dt_old_value
             || path_count_new_value != path_count_old_value
+            || vc_scheme_new != vc_scheme_old
             || paths_rendered == 0
         ) { // any change... reset plot
             var data = document.getElementById('data');
@@ -400,6 +401,7 @@
             bs_use_log_process_old = bs_use_log_process_new;
             in_dt_old_value = in_dt_new_value;
             path_count_old_value = path_count_new_value;
+            vc_scheme_old = vc_scheme_new;
             paths_rendered = 0;
 
             hist_data = Array(20).fill(0);
@@ -413,37 +415,37 @@
 
         if (paths_rendered < Math.max(10, Math.min(path_count_new_value, 2500 / in_dt_new_value))) {
 
-            if (vc_scheme == "Accept-Reject") {
+            if (vc_scheme_new == "Accept-Reject") {
                 f1 = varRejection;
                 f2 = varRejection;
                 f3 = varRejection;
             }
 
-            if (vc_scheme == "Absorption") {
+            if (vc_scheme_new == "Absorption") {
                 f1 = varAbsp;
                 f2 = varAbsp;
                 f3 = varAbsp;
             }
 
-            if (vc_scheme == "Reflection") {
+            if (vc_scheme_new == "Reflection") {
                 f1 = varRef;
                 f2 = varRef;
                 f3 = varRef;
             }
 
-            if (vc_scheme == "Higham and Mao") {
+            if (vc_scheme_new == "Higham and Mao") {
                 f1 = varNone;
                 f2 = varNone;
                 f3 = varRef;
             }
 
-            if (vc_scheme == "Partial truncation") {
+            if (vc_scheme_new == "Partial truncation") {
                 f1 = varNone;
                 f2 = varNone;
                 f3 = varAbsp;
             }
 
-            if (vc_scheme == "Full truncation") {
+            if (vc_scheme_new == "Full truncation") {
                 f1 = varNone;
                 f2 = varAbsp;
                 f3 = varAbsp;
@@ -549,10 +551,6 @@
         paths_rendered = 0;
     }
 
-    function changeVCScheme() {
-        paths_rendered = 0;
-    }
-
     var model_type = 'bs';
 
     var bs_mu = document.getElementById('bs_mu');
@@ -565,6 +563,7 @@
     var in_dt = document.getElementById('in_dt');
     var bs_use_log_process = document.getElementById('bs_use_log_process');
     var in_path_count = document.getElementById('in_path_count');
+    var vc_scheme = document.getElementById('select_heston');
 
     var bs_mu_old_value = Number(bs_mu.value);
     var bs_sigma_old_value = Number(bs_sigma.value);
@@ -575,6 +574,7 @@
     var h_rho_old_value = Number(h_rho.value);
     var in_dt_old_value = Number(in_dt.value);
     var path_count_old_value = Number(in_path_count.value);
+    var vc_scheme_old = vc_scheme.value;
     var bs_use_log_process_old = bs_use_log_process.checked;
 
     var rnd_k = 0;
