@@ -21,6 +21,8 @@ html {
 }
 
 #div_top {
+    margin-left: 4.5em;
+    margin-right: 4.5em;
     display: flex;
     flex-direction: row;
 }

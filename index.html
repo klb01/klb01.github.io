@@ -69,6 +69,10 @@
                             <input id="in_dt" type="range" min="1" max="30" value="10" step="1" />
                         </div>
                         <div class="div_input">
+                            <label>Maximum path count</label>
+                            <input id="in_path_count" type="range" min="10" max="350" value="250" step="1" />
+                        </div>
+                        <div class="div_input">
                             <label>Use log spot process (see below)</label>
                             <input id="bs_use_log_process" type="checkbox" checked />
                         </div>
@@ -354,6 +358,10 @@
         }
     }
 
+    let f1 = varNone, f2 = varNone, f3 = varNone;
+
+    var vc_scheme = document.getElementById('select_heston').value;
+
     function animator() {
         var bs_mu_new_value = Number(bs_mu.value);
         var bs_sigma_new_value = Number(bs_sigma.value);
@@ -364,6 +372,7 @@
         var h_rho_new_value = Number(h_rho.value);
         var in_dt_new_value = Number(in_dt.value);
         var bs_use_log_process_new = bs_use_log_process.checked;
+        var path_count_new_value = Number(in_path_count.value);
 
         if (bs_S_new_value != bs_S_old_value
             || bs_sigma_new_value != bs_sigma_old_value
@@ -374,6 +383,7 @@
             || h_rho_new_value != h_rho_old_value
             || bs_use_log_process_new != bs_use_log_process_old
             || in_dt_new_value != in_dt_old_value
+            || path_count_new_value != path_count_old_value
             || paths_rendered == 0
         ) { // any change... reset plot
             var data = document.getElementById('data');
@@ -388,6 +398,7 @@
             h_rho_old_value = h_rho_new_value;
             bs_use_log_process_old = bs_use_log_process_new;
             in_dt_old_value = in_dt_new_value;
+            path_count_old_value = path_count_new_value;
             paths_rendered = 0;
 
             hist_data = Array(20).fill(0);
@@ -398,11 +409,8 @@
         let a, b, X0;
         const n = in_dt_new_value;
         const dt = 1.0 / n;
-        let f1 = varNone, f2 = varNone, f3 = varNone;
 
-        var vc_scheme = document.getElementById('select_heston').value;
-
-        if (paths_rendered < Math.max(10, Math.min(250, 2500 / in_dt_new_value))) {
+        if (paths_rendered < Math.max(10, Math.min(path_count_new_value, 2500 / in_dt_new_value))) {
 
             if (vc_scheme == "Accept-Reject") {
                 f1 = varRejection;
@@ -512,10 +520,14 @@
 
                 ++paths_rendered;
             }
+
+            right_hist();
+            requestAnimationFrame(animator);
+        } else {
+            setTimeout(animator, 200);
         }
 
-        right_hist();
-        requestAnimationFrame(animator);
+        
     }
 
     function changeModel() {
@@ -551,6 +563,7 @@
     var h_rho = document.getElementById('h_rho');
     var in_dt = document.getElementById('in_dt');
     var bs_use_log_process = document.getElementById('bs_use_log_process');
+    var in_path_count = document.getElementById('in_path_count');
 
     var bs_mu_old_value = Number(bs_mu.value);
     var bs_sigma_old_value = Number(bs_sigma.value);
@@ -560,6 +573,7 @@
     var h_v0_old_value = Number(h_v0.value);
     var h_rho_old_value = Number(h_rho.value);
     var in_dt_old_value = Number(in_dt.value);
+    var path_count_old_value = Number(in_path_count.value);
     var bs_use_log_process_old = bs_use_log_process.checked;
 
     var rnd_k = 0;
