@@ -14,8 +14,8 @@
         <div id="div_top">
             <div id="div_left">
                 <h1 id="h1">Monte Carlo Path Visualiser</h1>
-                <div id="div_main">
-                    <div class="div_input">
+                <div>
+                    <div id="div_inputs">
                         <label>Model</label>
                         <div id="input_radio">
                             <input id="bs" type="radio" name="input_model" checked onclick="changeModel();" />
@@ -23,59 +23,61 @@
                             <input id="heston" type="radio" name="input_model" onclick="changeModel();" />
                             <label>Heston</label>
                         </div>
-                        <div class="div_input">
-                            <label>Initial asset price S</label>
-                            <input id="bs_S" type="range" min="0" max="1" value="0.5" step="0.01" />
-                        </div>
-                        <div class="div_input">
-                            <label>Expected rate of return &mu;</label>
-                            <input id="bs_mu" type="range" min="0" max="1" value="0.0475" step="0.01" />
-                        </div>
-                        <div class="div_input">
-                            <label id="bs_sigma_label">Volatility &sigma;</label>
-                            <input id="bs_sigma" type="range" min="0" max="1" value="0.2" step="0.01" />
-                        </div>
+                        <output>&nbsp;</output>
+
+                        <label>Initial asset price S</label>
+                        <input id="bs_S" type="range" min="0" max="1" value="0.5" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                        <output>0.5</output>
+                        
+                        <label>Expected rate of return &mu;</label>
+                        <input id="bs_mu" type="range" min="0" max="1" value="0.05" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                        <output>0.05</output>
+                    
+                        <label id="bs_sigma_label">Volatility &sigma;</label>
+                        <input id="bs_sigma" type="range" min="0" max="1" value="0.2" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                        <output>0.2</output>
+                        
                         <div id="div_heston">
-                            <div>
-                                <label>Initial variance &nu;0</label>
-                                <input id="h_v0" type="range" min="0" max="1" value="0.05" step="0.01" />
-                            </div>
-                            <div class="div_input">
-                                <label>Mean reversion rate &kappa;</label>
-                                <input id="h_kappa" type="range" min="0" max="1" value="0.5" step="0.01" />
-                            </div>
-                            <div class="div_input">
-                                <label>Long variance &theta;</label>
-                                <input id="h_theta" type="range" min="0" max="1" value="0.05" step="0.01" />
-                            </div>
-                            <div class="div_input">
-                                <label>Correlation &rho;</label>
-                                <input id="h_rho" type="range" min="-1" max="1" value="0" step="0.01" />
-                            </div>
-                            <div class="div_input">
-                                <label>Variance correction scheme</label>
-                                <select id="select_heston" onchange="changeVCScheme();">
-                                    <option selected="selected">Accept-Reject</option>
-                                    <option>Absorption</option>
-                                    <option>Reflection</option>
-                                    <option>Higham and Mao</option>
-                                    <option>Partial truncation</option>
-                                    <option>Full truncation</option>
-                                </select>
-                            </div>
+                            <label>Initial variance &nu;0</label>
+                            <input id="h_v0" type="range" min="0" max="1" value="0.05" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                            <output>0.05</output>
+                            
+                            <label>Mean reversion rate &kappa;</label>
+                            <input id="h_kappa" type="range" min="0" max="1" value="0.5" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                            <output>0.5</output>
+
+                            <label>Long variance &theta;</label>
+                            <input id="h_theta" type="range" min="0" max="1" value="0.05" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                            <output>0.05</output>
+
+                            <label>Correlation &rho;</label>
+                            <input id="h_rho" type="range" min="-1" max="1" value="0" step="0.01" oninput="this.nextElementSibling.value = this.value;" />
+                            <output>0</output>
+
+                            <label>Variance correction scheme</label>
+                            <select id="select_heston" onchange="changeVCScheme();">
+                                <option selected="selected">Accept-Reject</option>
+                                <option>Absorption</option>
+                                <option>Reflection</option>
+                                <option>Higham and Mao</option>
+                                <option>Partial truncation</option>
+                                <option>Full truncation</option>
+                            </select>
+                            <output>&nbsp;</output>
                         </div>
-                        <div class="div_input">
-                            <label>Number of time-steps</label>
-                            <input id="in_dt" type="range" min="1" max="30" value="10" step="1" />
-                        </div>
-                        <div class="div_input">
-                            <label>Maximum path count</label>
-                            <input id="in_path_count" type="range" min="10" max="350" value="250" step="1" />
-                        </div>
-                        <div class="div_input">
-                            <label>Use log spot process (see below)</label>
-                            <input id="bs_use_log_process" type="checkbox" checked />
-                        </div>
+                        
+                        <label>Number of time-steps</label>
+                        <input id="in_dt" type="range" min="1" max="30" value="10" step="1" oninput="this.nextElementSibling.value = this.value;" />
+                        <output>10</output>
+
+                        <label>Maximum path count</label>
+                        <input id="in_path_count" type="range" min="10" max="350" value="250" step="1" oninput="this.nextElementSibling.value = this.value;" />
+                        <output>250</output>
+                        
+                        <label for="bs_use_log_process">Use log spot process (see below)</label>
+                        <input id="bs_use_log_process" type="checkbox" checked />
+                        <output>&nbsp;</output>
+
                     </div>
                 </div>
             </div>
@@ -283,18 +285,18 @@
             axes.innerHTML += `<path stroke-width="0.005" stroke="var(--axes-color)" d="M ${x} 1.0 l 0 -0.02"></path>`;
             y -= 0.1;
             axes.innerHTML += `<path stroke-width="0.005" stroke="var(--axes-color)" d="M 0.0 ${y} l 0.02 0"></path>`;
-            axes.innerHTML += `<text x="${i * 0.1 - 0.025}" y="1.05" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">${Number(i * 0.1).toFixed(1)}</text>`;
+            axes.innerHTML += `<text x="${i * 0.1 - 0.025}" y="1.05" font-size="0.04" fill="var(--axes-font-color)">${Number(i * 0.1).toFixed(1)}</text>`;
         }
-        axes.innerHTML += `<text x="${1 - 0.025}" y="1.05" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">${Number(1).toFixed(1)}</text>`;
-        axes.innerHTML += `<text x="0.42" y="1.14" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">Time step</text>`;
+        axes.innerHTML += `<text x="${1 - 0.025}" y="1.05" font-size="0.04" fill="var(--axes-font-color)">${Number(1).toFixed(1)}</text>`;
+        axes.innerHTML += `<text x="0.42" y="1.14" font-size="0.04" fill="var(--axes-font-color)">Time step</text>`;
 
         y = 1.015;
         x = -0.075;
         for (var i = 0; i < 10; ++i) {
             y -= 0.1;
-            axes.innerHTML += `<text x="${x}" y="${y}" font-size="var(--axes-font-size)" fill="var(--axes-font-color)">${Number((1 + i) * 0.1).toFixed(1)}</text>`;
+            axes.innerHTML += `<text x="${x}" y="${y}" font-size="0.04" fill="var(--axes-font-color)">${Number((1 + i) * 0.1).toFixed(1)}</text>`;
         }
-        axes.innerHTML += `<text x="-0.2" y="0.5" font-size="var(--axes-font-size)" fill="var(--axes-font-color)"
+        axes.innerHTML += `<text x="-0.2" y="0.5" font-size="0.04" fill="var(--axes-font-color)"
         style="transform-origin: center;" transform="translate(-0.2,0.45) rotate(-90) translate(0.2,-0.5)">Asset price</text>`;
     }
 
@@ -539,7 +541,7 @@
 
         if (model_type == 'heston') {
             document.getElementById('bs_sigma_label').innerHTML = 'Vol of vol &sigma;';
-            document.getElementById('div_heston').style.display = 'block';
+            document.getElementById('div_heston').style.display = 'grid';
         } else {
             document.getElementById('bs_sigma_label').innerHTML = 'Volatility &sigma;';
             document.getElementById('div_heston').style.display = 'none';
