@@ -171,44 +171,44 @@
                 the geometric
                 Brownian process \(S_{t}\), however, they do in fact vanish for an ordinary Brownian process.
 
-                If we let \(S_{t}(X_{t}) = e^{X_{t}}\) then, by Ito&apos;s lemma, we have
+                If we let \(S(t, x) = e^{x}\) then, by Ito&apos;s lemma, we have
                 \[
                 \begin{align}
-                d S_{t}
-                &= \frac{\partial S_{t}}{\partial t} dt + \frac{\partial S_{t}}{\partial X_{t}} d X_{t} + \frac{1}{2}
-                \frac{\partial^2 S_{t}}{\partial X_{t}^2} d X_{t}^2 \\
-                &= \left( d X_{t} + d X_{t}^2 \right) S_{t}.
+                d S
+                &= \frac{\partial S}{\partial t} dt + \frac{\partial S}{\partial x} d X_{t} + \frac{1}{2}
+                \frac{\partial^2 S}{\partial x^2} d X_{t}^2 \\
+                &= \left( d X_{t} + \frac{1}{2} d X_{t}^2 \right) S.
                 \end{align}
                 \]
                 Suppose that \(dX_{t}\) is a general stochastic differential equation \(X_{t}\) with
                 \[
-                dX_{t} = \alpha(X_{t}) \; dt + \beta(X_{t}) \; dW_{t}, \label{sde} \tag{3}
+                dX_{t} = \alpha(t, X_{t}) \; dt + \beta(t, X_{t}) \; dW_{t}, \label{sde} \tag{3}
                 \]
                 where \(dW_{t}\) denotes a standard Wiener process, then
                 \[
                 \begin{align}
-                d S_{t}
-                &= S_{t} \left( \left(\alpha(X_{t}) \; dt + \beta(X_{t}) \; dW_{t}\right) + \frac{1}{2} \left(
-                \alpha(X_{t}) \; dt + \beta(X_{t}) \; dW_{t} \right)^2 \right)
-                \\ &= S_{t} \left( \left(\alpha(X_{t}) + \frac{1}{2} \beta^2(X_{t}) \right) dt +
-                \beta(X_{t}) \; dW_{t} \right)
+                d S
+                &= \left( \left(\alpha(t, X_{t}) \; dt + \beta(t, X_{t}) \; dW_{t}\right) + \frac{1}{2} \left(
+                \alpha(t, X_{t}) \; dt + \beta(t, X_{t}) \; dW_{t} \right)^2 \right) S
+                \\ &= \left( \left(\alpha(t, X_{t}) + \frac{1}{2} \beta^2(t, X_{t}) \right) dt +
+                \beta(t, X_{t}) \; dW_{t} \right) S
                 \end{align}
                 \]
                 where the last expression is obtained by noting the stochastic calculus identities
                 \(dt^2 \to 0\), \(\; dt \, dW \to 0\) and \(dW^2 \to dt\). Written another way,
                 \[
-                d S_{t} = \gamma(X_{t}) \; S_{t} \; dt + \beta(X_{t}) \; S_{t} \; dW_{t},
+                d S = \gamma(t, X_{t}) \; S \; dt + \beta(t, X_{t}) \; S \; dW_{t},
                 \]
                 where
                 \[
-                \gamma(X_{t}) = \alpha(X_{t}) + \frac{1}{2} \beta^2(X_{t}).
+                \gamma(t, X_{t}) = \alpha(t, X_{t}) + \frac{1}{2} \beta^2(t, X_{t}).
                 \]
 
                 We recognise this is the same as the Geometric Brownian motion process (\(\ref{bs}\)) above provided
                 that
                 \[
-                \beta(X_{t}) \equiv \sigma \;\; \text{and} \;\; \gamma(X_{t}) \equiv \mu \implies \alpha(X_{t}) =
-                \gamma(X_{t}) - \frac{1}{2} \beta^2(X_{t}) = \mu - \frac{1}{2} \sigma^2.
+                \beta(t, X_{t}) \equiv \sigma \;\; \text{and} \;\; \gamma(t, X_{t}) \equiv \mu \implies \alpha(t, X_{t}) =
+                \gamma(t, X_{t}) - \frac{1}{2} \beta^2(t, X_{t}) = \mu - \frac{1}{2} \sigma^2.
                 \]
                 If we substitute these values into (\(\ref{sde}\)) then
                 \[
